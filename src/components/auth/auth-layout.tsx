@@ -14,16 +14,16 @@ export default function AuthLayout() {
         <h1 className="text-2xl font-bold text-center mb-6">Welcome!</h1>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid grid-cols-2 mb-4 w-full">
-            <TabsTrigger value="login">
-              <LoginForm />
-            </TabsTrigger>
-            <TabsTrigger value="register">
-              <RegisterForm />
-            </TabsTrigger>
+            <TabsTrigger value="login">Login</TabsTrigger>
+            <TabsTrigger value="register">Register</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="login">Login</TabsContent>
-          <TabsContent value="register">Register</TabsContent>
+          <TabsContent value="login">
+            <LoginForm />
+          </TabsContent>
+          <TabsContent value="register">
+            <RegisterForm />
+          </TabsContent>
         </Tabs>
       </div>
     </div>
