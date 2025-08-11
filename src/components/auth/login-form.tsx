@@ -4,12 +4,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { signIn } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
-  email: z.string().email("Please enter your email address"),
+  email: z.string().email("Please enter a valid email address"),
   password: z
     .string()
     .min(8, "Please your password should be 8 characters long"),
@@ -18,6 +28,7 @@ const loginSchema = z.object({
 type LoginFormvalues = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<LoginFormvalues>({
@@ -28,9 +39,32 @@ export default function LoginForm() {
     },
   });
 
+  const onLoginSubmit = async (values: LoginFormvalues) => {
+    setIsLoading(true);
+
+    try {
+      const { error } = await signIn.email({
+        email: values.email,
+        password: values.password,
+        rememberMe: true,
+      });
+
+      if (error) {
+        toast("Login Failed");
+        return;
+      }
+      toast("Login Successful");
+      router.push("/");
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form className="space-y-4">
+      <form onSubmit={form.handleSubmit(onLoginSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="email"
@@ -40,6 +74,7 @@ export default function LoginForm() {
               <FormControl>
                 <Input placeholder="Enter your email address" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -56,6 +91,7 @@ export default function LoginForm() {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />

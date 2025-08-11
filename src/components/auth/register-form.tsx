@@ -4,14 +4,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { signUp } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 const registerSchema = z
   .object({
     name: z.string().min(3, "Name must be atleast 3 characters long!"),
-    email: z.string().email("Please enter your email address"),
+    email: z.string().email("Please enter a valid email address"),
     password: z.string().min(8, "Password must be atleast 8 characters long!"),
     confirmPassword: z
       .string()
@@ -24,7 +33,11 @@ const registerSchema = z
 
 type RegisterFormvalues = z.infer<typeof registerSchema>;
 
-export default function RegisterForm() {
+interface RegisterFormProps {
+  onSucess?: () => void;
+}
+
+export default function RegisterForm({ onSucess }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<RegisterFormvalues>({
@@ -37,9 +50,40 @@ export default function RegisterForm() {
     },
   });
 
+  const onRegisterSubmit = async (values: RegisterFormvalues) => {
+    setIsLoading(true);
+
+    try {
+      const { error } = await signUp.email({
+        name: values.name,
+        email: values.email,
+        password: values.password,
+      });
+
+      if (error) {
+        toast("Failed to create account. Please try again");
+        return;
+      }
+      toast(
+        "Your account has been created successfully. Please sign in with email and password"
+      );
+
+      if (onSucess) {
+        onSucess();
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onRegisterSubmit)}
+        className="space-y-4"
+      >
         <FormField
           control={form.control}
           name="name"
@@ -49,6 +93,7 @@ export default function RegisterForm() {
               <FormControl>
                 <Input placeholder="Enter your name" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -61,6 +106,7 @@ export default function RegisterForm() {
               <FormControl>
                 <Input placeholder="Enter your email" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -77,6 +123,7 @@ export default function RegisterForm() {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -93,6 +140,7 @@ export default function RegisterForm() {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />

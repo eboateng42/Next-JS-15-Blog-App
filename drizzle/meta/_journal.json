@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1754881809247,
+      "tag": "0000_clear_zarda",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1754882168249,
+      "tag": "0001_tidy_loners",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1754882578765,
+      "tag": "0002_parched_zuras",
+      "breakpoints": true
+    }
+  ]
+}

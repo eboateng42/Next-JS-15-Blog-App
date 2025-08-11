@@ -22,7 +22,7 @@ export default function AuthLayout() {
             <LoginForm />
           </TabsContent>
           <TabsContent value="register">
-            <RegisterForm />
+            <RegisterForm onSucess={() => setActiveTab("login")} />
           </TabsContent>
         </Tabs>
       </div>
