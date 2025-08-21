@@ -43,7 +43,7 @@ export default function Header() {
           {/* Placeholder for theme toggle */}
           <div className="flex items-center gap-2">
             {isPending ? null : session?.user ? (
-              <UserMenu />
+              <UserMenu user={session?.user} />
             ) : (
               <Button
                 className="cursor-pointer"
