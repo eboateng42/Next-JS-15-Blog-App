@@ -8,6 +8,9 @@ import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition } from "react";
+import { createPost } from "@/actions/post-actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const postSchema = z.object({
   title: z
@@ -25,6 +28,7 @@ type PostFormValues = z.infer<typeof postSchema>;
 
 export default function PostForm() {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const {
     register,
@@ -40,7 +44,29 @@ export default function PostForm() {
   });
 
   const onFormSubmit = async (data: PostFormValues) => {
-    console.log(data);
+    startTransition(async () => {
+      try {
+        const formData = new FormData();
+        formData.append("title", data.title);
+        formData.append("description", data.description);
+        formData.append("content", data.content);
+
+        let res;
+
+        res = await createPost(formData);
+        console.log(res, "res");
+
+        if (res.success) {
+          toast("Post created successfully");
+          router.refresh();
+          router.push("/");
+        } else {
+          toast(res.message);
+        }
+      } catch (e) {
+        toast("Failed to create post");
+      }
+    });
   };
 
   return (
@@ -84,7 +110,7 @@ export default function PostForm() {
         )}
       </div>
       <Button type="submit" disabled={isPending} className="mt-5 w-full">
-        {isPending ? "Saving Post" : "Create Post"}
+        {isPending ? "Saving Post..." : "Create Post"}
       </Button>
     </form>
   );
