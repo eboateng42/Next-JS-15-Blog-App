@@ -109,7 +109,11 @@ export default function PostForm() {
           <p className="text-sm text-red-700">{errors.content.message}</p>
         )}
       </div>
-      <Button type="submit" disabled={isPending} className="mt-5 w-full">
+      <Button
+        type="submit"
+        disabled={isPending}
+        className="mt-5 w-full cursor-pointer"
+      >
         {isPending ? "Saving Post..." : "Create Post"}
       </Button>
     </form>
